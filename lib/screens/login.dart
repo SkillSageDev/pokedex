@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-
-import '../navigation/AppRoutes.dart';
-import '../utiles/shared_pref.dart';
+import '../../navigation/AppRoutes.dart';
+import '../../utiles/shared_pref.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final formKey = GlobalKey<FormState>(); //=>12346FGH
+  //Checker -------------------------------------------------------
+
+  //=>12346FGH
+  final formKey = GlobalKey<FormState>();
 
   final emailController = TextEditingController();
   final passController = TextEditingController();
@@ -30,105 +32,172 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final email = emailController.text.trim();
     final pass = passController.text;
-    await AuthPrefs.saveUser(username: 'Nan', email: email,password: pass);
-    Navigator.pushNamed(context, AppRoutes.home);
+    await AuthPrefs.saveUser(username: 'Nan', email: email, password: pass);
 
+    if (mounted) {
+      Navigator.pushNamed(context, AppRoutes.home);
+    }
   }
+
+  //Checker ---------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    var topPanelHeight = height * 0.35;
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text("Login", style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),),centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: "Email",
-                  hintText: "Example@gmail.com",
-                  border: OutlineInputBorder(),
-                ),
-                validator: (v) {
-                  final value = v?.trim() ?? "";
-                  if (value.isEmpty) return "Required Email";
-                  if (!value.contains("@")) return "Enter valid email";
-                  return null;
-                },
+      backgroundColor: Colors.red,
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            top: 70,
+            left: 0,
+            right: 0,
+            child: Opacity(
+              opacity: 0.12,
+              child: Image.asset(
+                'assets/images/Sign_Image.png',
+                height: 250,
+                width: 250,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.catching_pokemon, size: 200, color: Colors.white10),
               ),
-              const SizedBox(height: 12),
-
-              TextFormField(
-                controller: passController,
-                obscureText: hidePass,
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  hintText: "********",
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(hidePass ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () => setState(() => hidePass = !hidePass),
-                  ),
-                ),
-                validator: (v) {
-                  final value = v ?? "";
-                  if (value.isEmpty) return "Required Password";
-                  if (value.length < 6) return "Password must be 6+ characters";
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 12),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: onSignup,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      foregroundColor: Colors.white,
-                    ),
-                  child: const Text("Login",style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold
-                  )),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don't have an account? "),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.signup);
-                    },
-                    child: const Text(
-                      "Sign up",
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
+
+          // 2. White Data Card
+          Positioned(
+            bottom: 0,
+            child: Container(
+              width: width,
+              height: height - topPanelHeight,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(35),
+                  topRight: Radius.circular(35),
+                ),
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 50, left: 25, right: 25),
+                child: Column(
+                  children: [
+// This Is Where We Will Put Login Items ------------------------------------------------------------------------
+
+                    Form(
+                      key: formKey,
+                      child: Column( // FIXED: Changed ListView to Column
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextFormField(
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(
+                              labelText: "Email",
+                              hintText: "Example@gmail.com",
+                              border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(30.0)),),
+                            ),
+                            validator: (v) {
+                              final value = v?.trim() ?? "";
+                              if (value.isEmpty) return "Required Email";
+                              if (!value.contains("@")) return "Enter valid email";
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+
+                          TextFormField(
+                            controller: passController,
+                            obscureText: hidePass,
+                            decoration: InputDecoration(
+                              labelText: "Password",
+                              hintText: "********",
+                              border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(30.0)),),
+                              suffixIcon: IconButton(
+                                icon: Icon(hidePass ? Icons.visibility_off : Icons.visibility),
+                                onPressed: () => setState(() => hidePass = !hidePass),
+                              ),
+                            ),
+                            validator: (v) {
+                              final value = v ?? "";
+                              if (value.isEmpty) return "Required Password";
+                              if (value.length < 6) return "Password must be 6+ characters";
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: onSignup,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text("Login", style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold
+                              )),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text("Don't have an account? "),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(context, AppRoutes.signup);
+                                },
+                                child: const Text(
+                                  "Sign up",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+
+// -----------------------------------------------------------------------------------------------------------------------------
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // 4. Header Info
+          Positioned(
+            top: 100,
+            left: 25,
+            right: 25,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                //Title
+                Text(
+                  'Login',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 35,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
