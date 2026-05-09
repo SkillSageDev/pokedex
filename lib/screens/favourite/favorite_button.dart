@@ -18,46 +18,29 @@ class _FavoriteButtonState extends State<FavoriteButton> {
   @override
   void initState() {
     super.initState();
-    _checkDatabase(); // This is the fix! It runs when you return to Home.
-  }
-
-  // This ensures the heart stays red even if you scroll the list
-  @override
-  void didUpdateWidget(covariant FavoriteButton oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.item.title != widget.item.title) {
-      _checkDatabase();
-    }
+    _checkDatabase();
   }
 
   Future<void> _checkDatabase() async {
     final favorites = await DatabaseService.instance.getFavorites();
-    final exists = favorites.any((e) => e.title == widget.item.title);
-    if (mounted) {
-      setState(() {
-        isFavorite = exists;
-      });
-    }
+    final exists = favorites.any((e) => e.name == widget.item.name);
+    if (mounted) setState(() => isFavorite = exists);
   }
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
       icon: Icon(
         isFavorite ? Icons.favorite : Icons.favorite_border,
         color: isFavorite ? Colors.red : Colors.grey,
       ),
       onPressed: () async {
-        setState(() { isFavorite = !isFavorite; });
-
         if (isFavorite) {
-          await DatabaseService.instance.addFavorite(widget.item);
+          await DatabaseService.instance.removeFavoriteByName(widget.item.name);
         } else {
-          await DatabaseService.instance.removeFavoriteByTitle(widget.item.title);
+          await DatabaseService.instance.addFavorite(widget.item);
         }
-
+        setState(() => isFavorite = !isFavorite);
         if (widget.onToggle != null) widget.onToggle!();
       },
     );
