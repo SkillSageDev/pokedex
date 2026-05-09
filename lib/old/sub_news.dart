@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../navigation/AppRoutes.dart';
-import '../../model/item.dart';
-import '../favourite_news/favorite_button.dart';
+import '../navigation/AppRoutes.dart';
+import '../model/item.dart';
+import '../screens/favourite_news/favorite_button.dart';
 
 class SubNews extends StatefulWidget {
   const SubNews({super.key});

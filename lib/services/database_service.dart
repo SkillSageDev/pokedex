@@ -2,15 +2,13 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../model/item.dart';
 
-class DatabaseService
-{
+class DatabaseService {
   static final DatabaseService instance = DatabaseService._constructor();
   static Database? _db;
 
   DatabaseService._constructor();
 
-  Future<Database> get database async
-  {
+  Future<Database> get database async {
     if (_db != null) return _db!;
     _db = await _initDatabase();
     return _db!;
@@ -22,26 +20,45 @@ class DatabaseService
 
     return await openDatabase(
       databasePath,
-      version: 1,
+      // Incremented version to 2 because we changed the table structure
+      version: 2,
       onCreate: (db, version) {
-        db.execute('''
-          CREATE TABLE favorites (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            imagePath TEXT NOT NULL,
-            description TEXT NOT NULL
-          )
-        ''');
+        _createDb(db);
+      },
+      onUpgrade: (db, oldVersion, newVersion) {
+        if (oldVersion < 2) {
+          // Simplest way to upgrade during development: drop and recreate
+          db.execute('DROP TABLE IF EXISTS favorites');
+          _createDb(db);
+        }
       },
     );
   }
 
+  Future<void> _createDb(Database db) async {
+    await db.execute('''
+      CREATE TABLE favorites (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        imagePath TEXT NOT NULL,
+        num TEXT NOT NULL,
+        type TEXT NOT NULL,
+        height TEXT NOT NULL,
+        weight TEXT NOT NULL,
+        description TEXT NOT NULL,
+        stats TEXT NOT NULL
+      )
+    ''');
+  }
+
   // Insert
-  Future<void> addFavorite(Item item) async
-  {
+  Future<void> addFavorite(Item item) async {
     final db = await database;
-    await db.insert('favorites', item.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    await db.insert(
+      'favorites',
+      item.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   // Read
@@ -56,7 +73,8 @@ class DatabaseService
     final db = await database;
     await db.delete('favorites', where: 'id = ?', whereArgs: [id]);
   }
-  // Delete (Backup)
+
+  // Delete by Title
   Future<void> removeFavoriteByTitle(String title) async {
     final db = await database;
     await db.delete(
@@ -65,10 +83,10 @@ class DatabaseService
       whereArgs: [title],
     );
   }
+
   // Clear all
   Future<void> clearAllFavorites() async {
     final db = await database;
     await db.delete('favorites');
   }
 }
-// await DatabaseService.instance.removeFavorite(item.id!);

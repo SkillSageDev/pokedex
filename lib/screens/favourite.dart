@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'news_post/sort.dart';
-import 'news_post/main_news.dart';
-import 'favourite_news/favourite_items.dart';
+import 'home/sort.dart';
+import 'home/cards.dart';
+import 'favourite/favourite_items.dart';
+import 'home/sort.dart';
 
 class Favourite extends StatelessWidget {
   const Favourite({super.key});
@@ -10,24 +11,29 @@ class Favourite extends StatelessWidget {
   Widget build(BuildContext context)
   {
     return Scaffold(
-
-
         appBar: AppBar(
-          title: const Text("The Favourite News", style: TextStyle(fontSize: 24,color: Colors.red,fontWeight: FontWeight.bold),),centerTitle: true,
+          backgroundColor: Colors.red,
+          automaticallyImplyLeading: false,
+          title: const Text(
+            "Favorites",
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
-
-
-        body: Column
-          (
-          children:
-          [
-            Expanded(child: FavouriteItems()),
+        body: Column(
+          children: [
+            const SizedBox(height: 24),
+            const Sort(activeTab: "Favorites"),
+             Expanded(
+              child: FavouriteItems(),
+            ),
           ],
         )
-
-
-
-
     );
   }
 }

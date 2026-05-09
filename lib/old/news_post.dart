@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'news_post/sort.dart';
-import 'news_post/main_news.dart';
-import 'news_post/sub_news.dart';
+import '../screens/news_post/sort.dart';
+import '../screens/news_post/main_news.dart';
+import '../screens/news_post/sub_news.dart';
 import '../navigation/AppRoutes.dart';
 import '../utiles/shared_pref.dart';
 
