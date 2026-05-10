@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/services/realtime_database.dart';
 import '../../navigation/AppRoutes.dart';
 import '../../model/item.dart';
 import '../../services/database_service.dart';
@@ -14,8 +15,10 @@ class FavouriteItems extends StatefulWidget {
 class _FavouriteItemsState extends State<FavouriteItems> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Item>>(
-      future: DatabaseService.instance.getFavorites(),
+    // return FutureBuilder<List<Item>>(
+    return FutureBuilder<dynamic>(
+      // future: DatabaseService.instance.getFavorites(),
+      future: RealtimeDatabase.getFavorites(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -23,8 +26,10 @@ class _FavouriteItemsState extends State<FavouriteItems> {
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(
-            child: Text("No favorites found",
-                style: TextStyle(color: Colors.grey, fontSize: 16)),
+            child: Text(
+              "No favorites found",
+              style: TextStyle(color: Colors.grey, fontSize: 16),
+            ),
           );
         }
 
@@ -34,10 +39,10 @@ class _FavouriteItemsState extends State<FavouriteItems> {
         return GridView.builder(
           padding: const EdgeInsets.all(16.0),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,          // 2 items per row
-            crossAxisSpacing: 16,       // Space between cards (left/right)
-            mainAxisSpacing: 16,        // Space between cards (up/down)
-            childAspectRatio: 0.8,      // Controls the height of the cards
+            crossAxisCount: 2, // 2 items per row
+            crossAxisSpacing: 16, // Space between cards (left/right)
+            mainAxisSpacing: 16, // Space between cards (up/down)
+            childAspectRatio: 0.8, // Controls the height of the cards
           ),
           itemCount: items.length,
           itemBuilder: (context, index) {
@@ -57,13 +62,17 @@ class _FavouriteItemsState extends State<FavouriteItems> {
                 "species": item.species,
                 "ability": item.ability,
                 "stats": item.stats,
-              }
+              },
             };
 
             return InkWell(
               borderRadius: BorderRadius.circular(15.0),
               onTap: () {
-                Navigator.pushNamed(context, AppRoutes.details, arguments: pokemonData);
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.details,
+                  arguments: pokemonData,
+                );
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -74,7 +83,7 @@ class _FavouriteItemsState extends State<FavouriteItems> {
                       color: Colors.black.withOpacity(0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
-                    )
+                    ),
                   ],
                 ),
                 child: Column(
@@ -87,12 +96,18 @@ class _FavouriteItemsState extends State<FavouriteItems> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: Color(item.colorValue).withOpacity(0.15),
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(15),
+                            ),
                           ),
                           child: Center(
                             child: Hero(
                               tag: "fav_${item.name}",
-                              child: Image.asset(item.img, height: 80, fit: BoxFit.contain),
+                              child: Image.asset(
+                                item.img,
+                                height: 80,
+                                fit: BoxFit.contain,
+                              ),
                             ),
                           ),
                         ),
@@ -113,13 +128,19 @@ class _FavouriteItemsState extends State<FavouriteItems> {
                         children: [
                           Text(
                             item.name,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             "#${item.num}",
-                            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
@@ -134,3 +155,4 @@ class _FavouriteItemsState extends State<FavouriteItems> {
     );
   }
 }
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/services/realtime_database.dart';
 import '../../services/database_service.dart';
 import '../../model/item.dart';
 
@@ -23,8 +24,11 @@ class _FavoriteButtonState extends State<FavoriteButton> {
 
   Future<void> _checkDatabase() async {
     final favorites = await DatabaseService.instance.getFavorites();
+    final rtIsFavorites = await RealtimeDatabase.isFav(widget.item.id);
     final exists = favorites.any((e) => e.name == widget.item.name);
-    if (mounted) setState(() => isFavorite = exists);
+
+    // if (mounted) setState(() => isFavorite = exists);
+    if (mounted) setState(() => isFavorite = rtIsFavorites);
   }
 
   @override
@@ -36,9 +40,11 @@ class _FavoriteButtonState extends State<FavoriteButton> {
       ),
       onPressed: () async {
         if (isFavorite) {
-          await DatabaseService.instance.removeFavoriteByName(widget.item.name);
+          // await DatabaseService.instance.removeFavoriteByName(widget.item.name);
+          await RealtimeDatabase.removeFavoriteByName(widget.item.id);
         } else {
-          await DatabaseService.instance.addFavorite(widget.item);
+          // await DatabaseService.instance.addFavorite(widget.item);
+          await RealtimeDatabase.addFavorite(widget.item);
         }
         setState(() => isFavorite = !isFavorite);
         if (widget.onToggle != null) widget.onToggle!();
@@ -46,3 +52,4 @@ class _FavoriteButtonState extends State<FavoriteButton> {
     );
   }
 }
+

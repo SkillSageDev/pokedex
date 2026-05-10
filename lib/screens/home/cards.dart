@@ -16,6 +16,7 @@ class _CardsState extends State<Cards> {
       "heroTag": "bulbasaur",
       "color": Colors.teal,
       "pokemonDetail": {
+        "id": 1,
         "name": "Bulbasaur",
         "num": "001",
         "type": ["Grass", "Poison"],
@@ -33,12 +34,13 @@ class _CardsState extends State<Cards> {
           "Sp. Def": 65,
           "Speed": 45,
         },
-      }
+      },
     },
     {
       "heroTag": "pikachu",
       "color": Colors.orange,
       "pokemonDetail": {
+        "id": 2,
         "name": "Pikachu",
         "num": "025",
         "type": ["Electric"],
@@ -56,12 +58,13 @@ class _CardsState extends State<Cards> {
           "Sp. Def": 50,
           "Speed": 90,
         },
-      }
+      },
     },
     {
       "heroTag": "charmander",
       "color": Colors.redAccent,
       "pokemonDetail": {
+        "id": 3,
         "name": "Charmander",
         "num": "004",
         "type": ["Fire"],
@@ -79,12 +82,13 @@ class _CardsState extends State<Cards> {
           "Sp. Def": 50,
           "Speed": 65,
         },
-      }
+      },
     },
     {
       "heroTag": "squirtle",
       "color": Colors.blueAccent,
       "pokemonDetail": {
+        "id": 4,
         "name": "Squirtle",
         "num": "007",
         "type": ["Water"],
@@ -102,7 +106,7 @@ class _CardsState extends State<Cards> {
           "Sp. Def": 64,
           "Speed": 43,
         },
-      }
+      },
     },
   ];
 
@@ -113,10 +117,10 @@ class _CardsState extends State<Cards> {
       padding: const EdgeInsets.all(16.0),
       // This is the logic that puts the next item "down" when there's no space
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,          // 2 items per row
-        crossAxisSpacing: 16,       // Space between left and right
-        mainAxisSpacing: 16,        // Space between top and bottom
-        childAspectRatio: 0.8,      // Adjust this to fit your content height
+        crossAxisCount: 2, // 2 items per row
+        crossAxisSpacing: 16, // Space between left and right
+        mainAxisSpacing: 16, // Space between top and bottom
+        childAspectRatio: 0.8, // Adjust this to fit your content height
       ),
       itemCount: pokemonList.length,
       itemBuilder: (context, index) {
@@ -124,6 +128,7 @@ class _CardsState extends State<Cards> {
         final detail = pokemon["pokemonDetail"];
 
         final itemModel = Item(
+          id: detail["id"],
           name: detail["name"],
           img: detail["img"],
           num: detail["num"],
@@ -151,7 +156,7 @@ class _CardsState extends State<Cards> {
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
-                )
+                ),
               ],
             ),
             child: Column(
@@ -164,12 +169,18 @@ class _CardsState extends State<Cards> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         color: (pokemon["color"] as Color).withOpacity(0.15),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(15),
+                        ),
                       ),
                       child: Center(
                         child: Hero(
                           tag: pokemon["heroTag"],
-                          child: Image.asset(detail["img"], height: 80, fit: BoxFit.contain),
+                          child: Image.asset(
+                            detail["img"],
+                            height: 80,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     ),
@@ -190,12 +201,18 @@ class _CardsState extends State<Cards> {
                     children: [
                       Text(
                         detail["name"],
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         "#${detail["num"]}",
-                        style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -208,3 +225,4 @@ class _CardsState extends State<Cards> {
     );
   }
 }
+

@@ -1,21 +1,21 @@
 import 'dart:convert';
 
 class Item {
-  final int? id;
-  final String name;        // Matches "name"
-  final String img;         // Matches "img"
+  final int id;
+  final String name; // Matches "name"
+  final String img; // Matches "img"
   final String num;
   final List<String> type;
   final String height;
   final String weight;
   final String description;
-  final String species;     // New
-  final String ability;     // New
-  final int colorValue;     // Stores the color as an integer
+  final String species; // New
+  final String ability; // New
+  final int colorValue; // Stores the color as an integer
   final Map<String, dynamic> stats;
 
   const Item({
-    this.id,
+    required this.id,
     required this.name,
     required this.img,
     required this.num,
@@ -63,3 +63,4 @@ class Item {
     );
   }
 }
+
