@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pokedex/services/auth_service.dart';
 import '../../navigation/AppRoutes.dart';
-import '../../utiles/shared_pref.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final passController = TextEditingController();
 
   bool hidePass = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -27,15 +29,32 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> onSignup() async {
+  Future<void> onLogin() async {
     if (!formKey.currentState!.validate()) return;
 
     final email = emailController.text.trim();
     final pass = passController.text;
-    await AuthPrefs.saveUser(username: 'Nan', email: email, password: pass);
 
-    if (mounted) {
+    setState(() => _isLoading = true);
+
+    try {
+      await AuthService.logIn(
+        emailController.text.trim(),
+        passController.text.trim(),
+      );
+
+      final email = emailController.text.trim();
+      final pass = passController.text;
+
+      if (!mounted) return;
       Navigator.pushNamed(context, AppRoutes.home);
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "Authentication failed")),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -63,8 +82,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 250,
                 width: 250,
                 fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.catching_pokemon, size: 200, color: Colors.white10),
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.catching_pokemon,
+                  size: 200,
+                  color: Colors.white10,
+                ),
               ),
             ),
           ),
@@ -86,11 +108,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.only(top: 50, left: 25, right: 25),
                 child: Column(
                   children: [
-// This Is Where We Will Put Login Items ------------------------------------------------------------------------
-
+                    // This Is Where We Will Put Login Items ------------------------------------------------------------------------
                     Form(
                       key: formKey,
-                      child: Column( // FIXED: Changed ListView to Column
+                      child: Column(
+                        // FIXED: Changed ListView to Column
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           TextFormField(
@@ -99,12 +121,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: const InputDecoration(
                               labelText: "Email",
                               hintText: "Example@gmail.com",
-                              border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(30.0)),),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30.0),
+                                ),
+                              ),
                             ),
                             validator: (v) {
                               final value = v?.trim() ?? "";
                               if (value.isEmpty) return "Required Email";
-                              if (!value.contains("@")) return "Enter valid email";
+                              if (!value.contains("@"))
+                                return "Enter valid email";
                               return null;
                             },
                           ),
@@ -116,16 +143,26 @@ class _LoginScreenState extends State<LoginScreen> {
                             decoration: InputDecoration(
                               labelText: "Password",
                               hintText: "********",
-                              border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(30.0)),),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30.0),
+                                ),
+                              ),
                               suffixIcon: IconButton(
-                                icon: Icon(hidePass ? Icons.visibility_off : Icons.visibility),
-                                onPressed: () => setState(() => hidePass = !hidePass),
+                                icon: Icon(
+                                  hidePass
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () =>
+                                    setState(() => hidePass = !hidePass),
                               ),
                             ),
                             validator: (v) {
                               final value = v ?? "";
                               if (value.isEmpty) return "Required Password";
-                              if (value.length < 6) return "Password must be 6+ characters";
+                              if (value.length < 6)
+                                return "Password must be 6+ characters";
                               return null;
                             },
                           ),
@@ -136,15 +173,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                              onPressed: onSignup,
+                              onPressed: _isLoading ? null : onLogin,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
                                 foregroundColor: Colors.white,
                               ),
-                              child: const Text("Login", style: TextStyle(
+                              child: const Text(
+                                "Login",
+                                style: TextStyle(
                                   fontSize: 16,
-                                  fontWeight: FontWeight.bold
-                              )),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -154,7 +194,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               const Text("Don't have an account? "),
                               GestureDetector(
                                 onTap: () {
-                                  Navigator.pushNamed(context, AppRoutes.signup);
+                                  Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.signup,
+                                  );
                                 },
                                 child: const Text(
                                   "Sign up",
@@ -169,9 +212,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                    )
+                    ),
 
-// -----------------------------------------------------------------------------------------------------------------------------
+                    // -----------------------------------------------------------------------------------------------------------------------------
                   ],
                 ),
               ),
@@ -202,3 +245,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
