@@ -47,6 +47,7 @@ class DefaultFirebaseOptions {
     projectId: 'pokedex-8e228',
     authDomain: 'pokedex-8e228.firebaseapp.com',
     storageBucket: 'pokedex-8e228.firebasestorage.app',
+    databaseURL: 'https://pokedex-8e228-default-rtdb.firebaseio.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -55,6 +56,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '743224323840',
     projectId: 'pokedex-8e228',
     storageBucket: 'pokedex-8e228.firebasestorage.app',
+    databaseURL: 'https://pokedex-8e228-default-rtdb.firebaseio.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -64,6 +66,7 @@ class DefaultFirebaseOptions {
     projectId: 'pokedex-8e228',
     storageBucket: 'pokedex-8e228.firebasestorage.app',
     iosBundleId: 'com.example.pokedex',
+    databaseURL: 'https://pokedex-8e228-default-rtdb.firebaseio.com',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

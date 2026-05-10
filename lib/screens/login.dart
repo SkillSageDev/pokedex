@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/services/auth_service.dart';
-import '../../navigation/AppRoutes.dart';
+import '../navigation/app_routes.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -38,10 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await AuthService.logIn(
-        emailController.text.trim(),
-        passController.text.trim(),
-      );
+      await AuthService.logIn(emailController.text.trim(), passController.text.trim());
 
       final email = emailController.text.trim();
       final pass = passController.text;

@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/firebase_options.dart';
-import 'navigation/AppRoutes.dart';
-import 'navigation/RouterGenerator.dart';
+import 'navigation/app_routes.dart';
+import 'navigation/router_generator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

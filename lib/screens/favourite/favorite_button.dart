@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:pokedex/services/realtime_database.dart';
-import '../../services/database_service.dart';
 import '../../model/item.dart';
 
 class FavoriteButton extends StatefulWidget {
@@ -23,12 +24,12 @@ class _FavoriteButtonState extends State<FavoriteButton> {
   }
 
   Future<void> _checkDatabase() async {
-    final favorites = await DatabaseService.instance.getFavorites();
-    final rtIsFavorites = await RealtimeDatabase.isFav(widget.item.id);
-    final exists = favorites.any((e) => e.name == widget.item.name);
-
-    // if (mounted) setState(() => isFavorite = exists);
-    if (mounted) setState(() => isFavorite = rtIsFavorites);
+    try {
+      final rtIsFavorites = await RealtimeDatabase.isFav(widget.item.id);
+      if (mounted) setState(() => isFavorite = rtIsFavorites);
+    } on FirebaseAuthException {
+      if (mounted) setState(() => isFavorite = false);
+    }
   }
 
   @override
@@ -39,15 +40,32 @@ class _FavoriteButtonState extends State<FavoriteButton> {
         color: isFavorite ? Colors.red : Colors.grey,
       ),
       onPressed: () async {
-        if (isFavorite) {
-          // await DatabaseService.instance.removeFavoriteByName(widget.item.name);
-          await RealtimeDatabase.removeFavoriteByName(widget.item.id);
-        } else {
-          // await DatabaseService.instance.addFavorite(widget.item);
-          await RealtimeDatabase.addFavorite(widget.item);
+        try {
+          if (isFavorite) {
+            await RealtimeDatabase.removeFavoriteByName(widget.item.id);
+          } else {
+            await RealtimeDatabase.addFavorite(widget.item);
+          }
+          if (!mounted) return;
+          setState(() => isFavorite = !isFavorite);
+          if (widget.onToggle != null) widget.onToggle!();
+        } on FirebaseAuthException {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please log in to manage favorites.'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } on FirebaseException catch (e) {
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.message ?? 'Failed to update favorite.'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
         }
-        setState(() => isFavorite = !isFavorite);
-        if (widget.onToggle != null) widget.onToggle!();
       },
     );
   }

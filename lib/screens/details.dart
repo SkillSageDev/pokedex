@@ -48,11 +48,10 @@ class _DetailScreenState extends State<DetailScreen> with SingleTickerProviderSt
             right: -50,
             child: Opacity(
               opacity: 0.12,
-              child: Image.asset(
-                'assets/images/pokeball_white.png',
-                height: 250,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.catching_pokemon, size: 200, color: Colors.white10),
+              child: const Icon(
+                Icons.catching_pokemon,
+                size: 220,
+                color: Colors.white,
               ),
             ),
           ),

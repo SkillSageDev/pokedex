@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../navigation/AppRoutes.dart';
+import '../../navigation/app_routes.dart';
 
 class Sort extends StatefulWidget {
   final String activeTab;

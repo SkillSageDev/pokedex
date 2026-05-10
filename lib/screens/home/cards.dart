@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../navigation/AppRoutes.dart';
+import '../../navigation/app_routes.dart';
 import '../../model/item.dart';
 import '../favourite/favorite_button.dart';
 
@@ -180,6 +180,11 @@ class _CardsState extends State<Cards> {
                             detail["img"],
                             height: 80,
                             fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => const Icon(
+                              Icons.catching_pokemon,
+                              size: 60,
+                              color: Colors.black26,
+                            ),
                           ),
                         ),
                       ),

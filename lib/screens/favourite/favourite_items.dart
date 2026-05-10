@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/services/realtime_database.dart';
-import '../../navigation/AppRoutes.dart';
+import '../../navigation/app_routes.dart';
 import '../../model/item.dart';
-import '../../services/database_service.dart';
 import 'favorite_button.dart';
 
 class FavouriteItems extends StatefulWidget {
@@ -15,13 +14,21 @@ class FavouriteItems extends StatefulWidget {
 class _FavouriteItemsState extends State<FavouriteItems> {
   @override
   Widget build(BuildContext context) {
-    // return FutureBuilder<List<Item>>(
-    return FutureBuilder<dynamic>(
-      // future: DatabaseService.instance.getFavorites(),
-      future: RealtimeDatabase.getFavorites(),
+    return StreamBuilder<List<Item>>(
+      stream: RealtimeDatabase.watchFavorites(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              "Couldn't load favorites: ${snapshot.error}",
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.grey, fontSize: 14),
+            ),
+          );
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -107,6 +114,11 @@ class _FavouriteItemsState extends State<FavouriteItems> {
                                 item.img,
                                 height: 80,
                                 fit: BoxFit.contain,
+                                errorBuilder: (_, __, ___) => const Icon(
+                                  Icons.catching_pokemon,
+                                  size: 60,
+                                  color: Colors.black26,
+                                ),
                               ),
                             ),
                           ),
@@ -155,4 +167,3 @@ class _FavouriteItemsState extends State<FavouriteItems> {
     );
   }
 }
-
